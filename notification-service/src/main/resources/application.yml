@@ -1,0 +1,35 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /notification
+spring:
+  application:
+    name: notification-service
+  data:
+    mongodb:
+      uri: mongodb://admin:12345678@localhost:27017/notification-service?authSource=admin
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        # Delegate class cho ErrorHandlingDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+        # N?u dùng trusted packages thì c?n ch? rõ ho?c dùng "*"
+        spring.json.trusted.packages: "*"
+
+        # T?t type info headers n?u mu?n deserialize b?ng class c? ??nh
+        spring.json.use.type.headers: false
+
+        # Ch? ??nh class s? deserialize v?
+        spring.json.value.default.type: org.example.notificationservice.event.dto.NotificationEvent
+
+notification:
+  email:
+    url: localhost:9000/email-service
+
+
